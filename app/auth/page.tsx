@@ -5,23 +5,34 @@ import LoginForm from "@/components/Login";
 import SignupForm from "@/components/Signup";
 import OtpPopup from "@/components/Otppopup";
 import Image from "next/image";
+import { ArrowLeftIcon } from "lucide-react";
 
 const Page: React.FC = () => {
+  const [userType, setUserType] = useState<"staff" | "customer" | null>(null);
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [showOtpPopup, setShowOtpPopup] = useState<boolean>(false);
 
+  const handleUserTypeSelection = (type: "staff" | "customer") => {
+    setUserType(type);
+    setIsLogin(true);
+  };
+
   const toggleForm = () => setIsLogin(!isLogin);
+
+  const handleBack = () => {
+    setUserType(null);
+  };
 
   return (
     <div className="auth-page h-screen w-screen flex">
-      {/* Left section: only visible on large screens */}
+      {/* Left section omitted for brevity */}
       <div className="hidden lg:flex flex-col justify-center bg-[#fe6601] w-[40vw] h-screen items-center">
         {/* Logo in black circle */}
         <div className="bg-black rounded-full h-32 w-32 flex items-center justify-center mt-20">
           <Image
             src={'/assets/logo.png'}
             alt="logo"
-            width={100} // Adjust width and height to fit in the circle
+            width={100}
             height={100}
           />
         </div>
@@ -33,24 +44,34 @@ const Page: React.FC = () => {
         </div>
       </div>
 
-      {/* Right section: form */}
       <div className="flex flex-col justify-center items-center w-full lg:w-[60vw] p-6">
-        <div className="form-header mb-6 flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-bold mb-4">{isLogin ? "Login" : "Create an Account"}</h2>
-          <Button onClick={toggleForm} className="mb-4">
-            {isLogin ? "Switch to Signup" : "Switch to Login"}
-          </Button>
-        </div>
-        {/* Conditional rendering of login or signup forms */}
-        {isLogin ? (
-          <LoginForm showOtpPopup={setShowOtpPopup} />
+        {!userType ? (
+          <div className="flex flex-col space-y-4 mb-6">
+            <Button onClick={() => handleUserTypeSelection("staff")}>Organization</Button>
+            <Button onClick={() => handleUserTypeSelection("customer")}>Customer</Button>
+          </div>
         ) : (
-          <SignupForm showOtpPopup={setShowOtpPopup} />
+          <>
+            <Button onClick={handleBack} className="mb-4 flex items-center">
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Back
+            </Button>
+            <div className="form-header mb-6 flex flex-col items-center justify-center">
+              <h2 className="text-2xl font-bold mb-4">{isLogin ? `${userType.charAt(0).toUpperCase() + userType.slice(1)} Login` : `Create ${userType.charAt(0).toUpperCase() + userType.slice(1)} Account`}</h2>
+              <Button onClick={toggleForm} className="mb-4">
+                {isLogin ? "Switch to Signup" : "Switch to Login"}
+              </Button>
+            </div>
+            {isLogin ? (
+              <LoginForm userType={userType} showOtpPopup={setShowOtpPopup} />
+            ) : (
+              <SignupForm userType={userType} showOtpPopup={setShowOtpPopup} />
+            )}
+          </>
         )}
       </div>
 
-      {/* OTP Popup */}
-      <OtpPopup showPopup={showOtpPopup} closePopup={() => setShowOtpPopup(false)} />
+      {/* OTP Popup omitted for brevity */}
     </div>
   );
 };
