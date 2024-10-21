@@ -15,7 +15,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ showOtpPopup }) => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin} className="flex flex-col gap-4">
       <Label htmlFor="email">Email</Label>
       <Input type="email" id="email" placeholder="name@example.com" required />
       <Label htmlFor="password">Password</Label>
